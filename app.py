@@ -1,17 +1,19 @@
+import os
 from flask import Flask, request
-from database import engine, text
+from database import Database
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
+db = Database(os.getenv('DB_URI'))
 
-@app.route('/get_users', methods=['GET'])
-def get_transactions():
-    with engine.begin() as conn:
-        return {
-            'data': [
-                {'id': row.id, 'username': row.username} 
-                for row in conn.execute(text('select * from app_user'))
-            ]
-        }
+
+# DEVELOPMENT ROUTE ONLY
+@app.route('/exp-tracker/api/v1/get-users', methods=['GET'])
+def get_users():
+    return db.get_users()
+
 
 if __name__ == '__main__':
     app.run(debug=True)
