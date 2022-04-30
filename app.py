@@ -14,6 +14,7 @@ def get_user_transactions():
     user_id = request.args.get('user-id')
     return db.get_user_transactions(user_id)
 
+
 @app.route('/exp-tracker/api/v1/create-transaction', methods=['POST'])
 def create_transaction():
     data = request.form.to_dict()

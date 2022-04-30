@@ -34,8 +34,8 @@ class Database:
                     'category': row.category,
                     'trans_date': row.trans_date
                 } for row in conn.execute(
-                    text('SELECT * FROM transaction WHERE user_id = :id'), {'id': user_id}
-                )]
+                    text('SELECT * FROM transaction WHERE user_id = :id'),
+                    {'id': user_id})]
             }
 
     def create_new_transaction(self, transaction: dict) -> bool:
@@ -58,13 +58,11 @@ class Database:
                 text('''
                     INSERT INTO transaction(amount, trans_type, user_id, description, category)
                     VALUES (:amt, :trns_type, :usr_id, :desc, :cat)
-                '''),
-                {
+                '''), {
                     'amt': transaction['amount'],
                     'trns_type': transaction['trans_type'],
                     'usr_id': transaction['user_id'],
                     'desc': transaction['description'],
                     'cat': transaction['category']
-                }
-            )
+                })
         return {'result': str(res)}
