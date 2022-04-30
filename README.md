@@ -82,8 +82,8 @@ Base URL: `exp-tracker/api/v1/`
         <tr>
             <td>transaction/get-user-transactions</td>
             <td>GET</td>
-            <td></td>
             <td>user_id</td>
+            <td></td>
             <td><br>
             [<br>
             &nbsp;&nbsp;{

@@ -9,10 +9,15 @@ app = Flask(__name__)
 db = Database(os.getenv('DB_URI'))
 
 
-# DEVELOPMENT ROUTE ONLY
-@app.route('/exp-tracker/api/v1/get-users', methods=['GET'])
-def get_users():
-    return db.get_users()
+@app.route('/exp-tracker/api/v1/get-user-transactions', methods=['GET'])
+def get_user_transactions():
+    user_id = request.args.get('user-id')
+    return db.get_user_transactions(user_id)
+
+@app.route('/exp-tracker/api/v1/create-transaction', methods=['POST'])
+def create_transaction():
+    data = request.form.to_dict()
+    return db.create_new_transaction(data)
 
 
 if __name__ == '__main__':
