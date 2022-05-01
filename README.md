@@ -134,7 +134,7 @@ Base URL: `exp-tracker/api/v1/`
         </tr>
         <tr>
             <td>transaction/delete-transaction</td>
-            <td>POST</td>
+            <td>DELETE</td>
             <td></td>
             <td>transaction_id</td>
             <td>{'message': 'success' || 'error'}</td>

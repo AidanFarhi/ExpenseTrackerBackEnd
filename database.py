@@ -23,20 +23,21 @@ class Database:
         Returns:
             A list of dictionary objects representing each transaction
         """
-        with self.engine.begin() as conn:
-            return {
-                'data': [{
-                    'id': row.id,
-                    'amount': row.amount,
-                    'trans_type': row.trans_type,
-                    'user_id': row.user_id,
-                    'description': row.description,
-                    'category': row.category,
-                    'trans_date': row.trans_date
-                } for row in conn.execute(
+        try:
+            with self.engine.begin() as conn:
+                return [{
+                    'id': r.id,
+                    'amount': r.amount,
+                    'trans_type': r.trans_type,
+                    'user_id': r.user_id,
+                    'description': r.description,
+                    'category': r.category,
+                    'trans_date': r.trans_date
+                } for r in conn.execute(
                     text('SELECT * FROM transaction WHERE user_id = :id'),
                     {'id': user_id})]
-            }
+        except Exception:
+            return []
 
     def create_new_transaction(self, transaction: dict) -> bool:
         """Get all transactions for a given user id
@@ -53,16 +54,39 @@ class Database:
         Returns:
             True if successfull | False if not
         """
-        with self.engine.begin() as conn:
-            res = conn.execute(
-                text('''
-                    INSERT INTO transaction(amount, trans_type, user_id, description, category)
-                    VALUES (:amt, :trns_type, :usr_id, :desc, :cat)
-                '''), {
-                    'amt': transaction['amount'],
-                    'trns_type': transaction['trans_type'],
-                    'usr_id': transaction['user_id'],
-                    'desc': transaction['description'],
-                    'cat': transaction['category']
-                })
-        return {'result': str(res)}
+        try:
+            with self.engine.begin() as conn:
+                conn.execute(
+                    text('''
+                        INSERT INTO transaction(amount, trans_type, user_id, description, category)
+                        VALUES (:amt, :trns_type, :usr_id, :desc, :cat)
+                    '''), {
+                        'amt': transaction['amount'],
+                        'trns_type': transaction['trans_type'],
+                        'usr_id': transaction['user_id'],
+                        'desc': transaction['description'],
+                        'cat': transaction['category']
+                    })
+            return True
+        except Exception:
+            return False
+
+    def delete_transaction(self, transaction_id: int) -> bool:
+        """Delete transaction from database with given id
+        
+        Args:
+            transaction_id: id of transaction to delete
+
+        Returns:
+            True if successfull | False if not
+        """
+        try:
+            with self.engine.begin() as conn:
+                res = conn.execute(
+                    text('DELETE FROM transaction WHERE id = :id'),
+                    {'id': transaction_id})
+            if res.rowcount > 0:
+                return True
+            return False
+        except Exception as e:
+            return False
