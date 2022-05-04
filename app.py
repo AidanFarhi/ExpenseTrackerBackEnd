@@ -1,6 +1,6 @@
 import os
 from flask import Flask, request
-from database import Database
+from database import Database, UsernameEmailExistException
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -27,6 +27,16 @@ def create_transaction():
 def delete_transaction():
     transaction_id = request.form.get('transaction_id')
     result = db.delete_transaction(transaction_id)
+    return {'result': result}
+
+
+@app.route('/exp-tracker/api/v1/create-user', methods=['POST'])
+def create_user():
+    payload = request.form.to_dict()
+    try:
+        result = db.create_user(payload)
+    except UsernameEmailExistException:
+        return {'result': 'username and email exist'}
     return {'result': result}
 
 
